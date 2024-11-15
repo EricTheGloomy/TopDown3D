@@ -11,7 +11,7 @@ public class GroundManager
     {
         GroundInstance = Object.Instantiate(groundPrefab);
         groundBounds = GroundInstance.GetComponent<Renderer>().bounds;
-        groundYLevel = groundBounds.center.y; // Set exact ground level
+        groundYLevel = groundBounds.center.y;
     }
 
     public Bounds GetGroundBounds()

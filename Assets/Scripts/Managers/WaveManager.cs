@@ -1,4 +1,3 @@
-// Scripts/Managers/WaveManager.cs
 using System.Collections;
 using UnityEngine;
 
@@ -8,10 +7,11 @@ public class WaveManager : MonoBehaviour
     public Transform playerTransform;
     public float waveDelay = 5f;
 
-    public float spawnAreaWidth = 20f; // Define play area width
-    public float spawnAreaLength = 20f; // Define play area length
+    public float spawnAreaWidth = 20f;
+    public float spawnAreaLength = 20f;
 
     private int currentWaveIndex = 0;
+    private Bounds groundBounds;
 
     private void Start()
     {
@@ -45,22 +45,32 @@ public class WaveManager : MonoBehaviour
     {
         Vector3 spawnPosition = GetRandomSpawnPosition();
 
-        // Raycast down to find the ground level, adjust position if needed
         if (Physics.Raycast(spawnPosition + Vector3.up * 10f, Vector3.down, out RaycastHit hit, 20f))
         {
             spawnPosition.y = hit.point.y;
         }
 
-        Instantiate(enemyPrefab, spawnPosition, Quaternion.identity);
+        GameObject enemy = Instantiate(enemyPrefab, spawnPosition, Quaternion.identity);
+
+        // Set the ground bounds for the enemy's movement constraints
+        EnemyController enemyController = enemy.GetComponent<EnemyController>();
+        if (enemyController != null)
+        {
+            enemyController.SetGroundBounds(groundBounds);
+        }
     }
 
     private Vector3 GetRandomSpawnPosition()
     {
-        // Generate a random position within the spawn area boundaries
         float x = Random.Range(-spawnAreaWidth / 2, spawnAreaWidth / 2);
         float z = Random.Range(-spawnAreaLength / 2, spawnAreaLength / 2);
         Vector3 spawnPosition = new Vector3(x, 0, z);
 
         return spawnPosition;
+    }
+
+    public void SetGroundBounds(Bounds bounds)
+    {
+        groundBounds = bounds;
     }
 }

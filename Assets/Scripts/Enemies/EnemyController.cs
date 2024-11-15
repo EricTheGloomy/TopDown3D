@@ -8,9 +8,9 @@ public class EnemyController : MonoBehaviour
     public float separationDistance = 1f;
     public float playerSeparationDistance = 1f;
     public float separationForce = 1f;
-
     private Transform player;
     private CharacterController characterController;
+    private Bounds groundBounds;
 
     private void Start()
     {
@@ -22,32 +22,42 @@ public class EnemyController : MonoBehaviour
     {
         if (player != null)
         {
-            // Calculate direction towards the player
             Vector3 direction = (player.position - transform.position).normalized;
-
-            // Apply separation forces
             direction += GetHorizontalSeparationDirection() + GetPlayerHorizontalSeparationDirection();
-
-            // Normalize the final direction vector
             direction = direction.normalized;
 
-            // Minimum magnitude threshold to ensure direction is meaningful
             float minMagnitudeThreshold = 0.01f;
-
             if (direction.magnitude > minMagnitudeThreshold)
             {
-                // Move towards the player while maintaining separation
                 Vector3 move = direction * moveSpeed * Time.deltaTime;
                 characterController.Move(move);
 
-                // Rotate to face the player only if direction.x or direction.z is significant
                 if (Mathf.Approximately(direction.x, 0) == false || Mathf.Approximately(direction.z, 0) == false)
                 {
                     Quaternion targetRotation = Quaternion.LookRotation(new Vector3(direction.x, 0, direction.z));
                     transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, Time.deltaTime * 5f);
                 }
+
+                // Constrain the enemy's position within ground bounds
+                ConstrainToBounds();
             }
         }
+    }
+
+    private void ConstrainToBounds()
+    {
+        Vector3 position = transform.position;
+        
+        // Clamp the enemy's position within the ground bounds
+        position.x = Mathf.Clamp(position.x, groundBounds.min.x, groundBounds.max.x);
+        position.z = Mathf.Clamp(position.z, groundBounds.min.z, groundBounds.max.z);
+
+        transform.position = position;
+    }
+
+    public void SetGroundBounds(Bounds bounds)
+    {
+        groundBounds = bounds;
     }
 
     private Vector3 GetHorizontalSeparationDirection()
@@ -60,7 +70,7 @@ public class EnemyController : MonoBehaviour
             if (enemyCollider.gameObject != gameObject && enemyCollider.CompareTag("Enemy"))
             {
                 Vector3 awayFromEnemy = transform.position - enemyCollider.transform.position;
-                awayFromEnemy.y = 0; // Ignore vertical component
+                awayFromEnemy.y = 0;
                 separationDirection += awayFromEnemy.normalized * separationForce;
             }
         }
@@ -71,14 +81,13 @@ public class EnemyController : MonoBehaviour
     private Vector3 GetPlayerHorizontalSeparationDirection()
     {
         Vector3 separationDirection = Vector3.zero;
-
         Vector3 toPlayer = player.position - transform.position;
         float horizontalDistanceToPlayer = new Vector2(toPlayer.x, toPlayer.z).magnitude;
 
         if (horizontalDistanceToPlayer < playerSeparationDistance)
         {
             Vector3 awayFromPlayer = transform.position - player.position;
-            awayFromPlayer.y = 0; // Ignore vertical component
+            awayFromPlayer.y = 0;
             separationDirection += awayFromPlayer.normalized * separationForce;
         }
 

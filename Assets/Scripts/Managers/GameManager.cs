@@ -6,12 +6,13 @@ public class GameManager : MonoBehaviour
     public static GameManager Instance;
 
     public GameObject groundPrefab;
-    public PrefabSettings obstacleSettings; // Use PrefabSettings for obstacle
-    public PrefabSettings playerSettings;   // Use PrefabSettings for player
+    public PrefabSettings obstacleSettings;
+    public PrefabSettings playerSettings;
     public GameObject cameraPrefab;
     public GameObject waveManagerPrefab;
 
-    private GroundManager groundManager;
+    public GroundManager groundManager; // Made public for access
+
     private ObstacleManager obstacleManager;
     private PlayerManager playerManager;
     private CameraManager cameraManager;
@@ -38,17 +39,22 @@ public class GameManager : MonoBehaviour
         // Step 1: Initialize ground
         groundManager = new GroundManager(groundPrefab);
 
-        // Step 2: Initialize obstacles using PrefabSettings
+        // Step 2: Initialize obstacles
         obstacleManager = new ObstacleManager(obstacleSettings, groundManager);
 
-        // Step 3: Initialize player using PrefabSettings
+        // Step 3: Initialize player
         playerManager = new PlayerManager(playerSettings, groundManager, obstacleManager);
 
-        // Step 4: Initialize camera
+        // Step 4: Set player ground bounds
+        var playerController = playerManager.PlayerInstance.GetComponent<PlayerController>();
+        playerController?.SetGroundBounds(groundManager.GetGroundBounds());
+
+        // Step 5: Initialize camera
         cameraManager = new CameraManager(cameraPrefab, playerManager.PlayerInstance.transform);
 
-        // Step 5: Initialize wave manager
+        // Step 6: Initialize wave manager
         waveManager = Instantiate(waveManagerPrefab).GetComponent<WaveManager>();
         waveManager.playerTransform = playerManager.PlayerInstance.transform;
+        waveManager.SetGroundBounds(groundManager.GetGroundBounds());
     }
 }
