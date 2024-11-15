@@ -277,6 +277,10 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 2537272548259810931, guid: fc89e86281462f24da33956d729d8e65, type: 3}
     - target: {fileID: 6503569516203421330, guid: 91e5bc9db2b755046bd1e1b9f742d378, type: 3}
+      propertyPath: groundSettings
+      value: 
+      objectReference: {fileID: 11400000, guid: f5e22fd2b56eb6845b8cb959c6bc34c4, type: 2}
+    - target: {fileID: 6503569516203421330, guid: 91e5bc9db2b755046bd1e1b9f742d378, type: 3}
       propertyPath: obstaclePrefab
       value: 
       objectReference: {fileID: 721597286159742929, guid: 2870ed3b39a40224a84d3843e250ac70, type: 3}
@@ -285,6 +289,10 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 11400000, guid: 99a88918c49c0e74bb6aa5b2e2e12eaf, type: 2}
     - target: {fileID: 6503569516203421330, guid: 91e5bc9db2b755046bd1e1b9f742d378, type: 3}
+      propertyPath: groundTilePrefab
+      value: 
+      objectReference: {fileID: 2377096811611160149, guid: c076f935241eaa84ea3f0c286ad85aa0, type: 3}
+    - target: {fileID: 6503569516203421330, guid: 91e5bc9db2b755046bd1e1b9f742d378, type: 3}
       propertyPath: obstacleSettings
       value: 
       objectReference: {fileID: 11400000, guid: fddb035ec6a8cce44901eaba04ee6f21, type: 2}
@@ -292,6 +300,14 @@ PrefabInstance:
       propertyPath: waveManagerPrefab
       value: 
       objectReference: {fileID: 1087253658658323462, guid: bdeef6b53d2104d4a84fe75f256dffc1, type: 3}
+    - target: {fileID: 6503569516203421330, guid: 91e5bc9db2b755046bd1e1b9f742d378, type: 3}
+      propertyPath: obstaclePrefabs.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6503569516203421330, guid: 91e5bc9db2b755046bd1e1b9f742d378, type: 3}
+      propertyPath: obstaclePrefabs.Array.data[0]
+      value: 
+      objectReference: {fileID: 721597286159742929, guid: 2870ed3b39a40224a84d3843e250ac70, type: 3}
     - target: {fileID: 6530702404562768126, guid: 91e5bc9db2b755046bd1e1b9f742d378, type: 3}
       propertyPath: m_Name
       value: GameManager

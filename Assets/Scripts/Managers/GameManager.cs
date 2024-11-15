@@ -5,14 +5,20 @@ public class GameManager : MonoBehaviour
 {
     public static GameManager Instance;
 
-    public GameObject groundPrefab;
+    [Header("Ground Settings")]
+    public GroundSettings groundSettings; // ScriptableObject for ground configuration
+
+    [Header("Obstacle Settings")]
+    public GameObject[] obstaclePrefabs; // Obstacle prefabs
     public PrefabSettings obstacleSettings;
+
+    [Header("Player Settings")]
     public PrefabSettings playerSettings;
+
     public GameObject cameraPrefab;
     public GameObject waveManagerPrefab;
 
-    public GroundManager groundManager; // Made public for access
-
+    private GroundManager groundManager;
     private ObstacleManager obstacleManager;
     private PlayerManager playerManager;
     private CameraManager cameraManager;
@@ -37,15 +43,15 @@ public class GameManager : MonoBehaviour
         Debug.Log("Game Initialized");
 
         // Step 1: Initialize ground
-        groundManager = new GroundManager(groundPrefab);
+        groundManager = new GroundManager(groundSettings);
 
         // Step 2: Initialize obstacles
-        obstacleManager = new ObstacleManager(obstacleSettings, groundManager);
+        obstacleManager = new ObstacleManager(obstaclePrefabs, obstacleSettings, groundManager);
 
         // Step 3: Initialize player
         playerManager = new PlayerManager(playerSettings, groundManager, obstacleManager);
 
-        // Step 4: Set player ground bounds
+        // Step 4: Set ground bounds for player
         var playerController = playerManager.PlayerInstance.GetComponent<PlayerController>();
         playerController?.SetGroundBounds(groundManager.GetGroundBounds());
 

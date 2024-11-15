@@ -5,19 +5,17 @@ public class PlayerManager
 {
     public GameObject PlayerInstance { get; private set; }
     private Bounds groundBounds;
-    private float groundYLevel;
+    private GroundManager groundManager;
     private PrefabSettings playerSettings;
-    private ObstacleManager obstacleManager;
 
     public PlayerManager(PrefabSettings playerSettings, GroundManager groundManager, ObstacleManager obstacleManager)
     {
         this.playerSettings = playerSettings;
+        this.groundManager = groundManager;
         groundBounds = groundManager.GetGroundBounds();
-        groundYLevel = groundManager.GetGroundYLevel();
-        this.obstacleManager = obstacleManager;
 
         Vector3 spawnPosition = GetValidPlayerPosition();
-        spawnPosition.y = groundYLevel + playerSettings.yOffset; // Use yOffset from PrefabSettings
+        spawnPosition.y = GetAdjustedHeight(spawnPosition); // Corrected height adjustment
         PlayerInstance = Object.Instantiate(playerSettings.prefab, spawnPosition, Quaternion.identity);
     }
 
@@ -28,7 +26,6 @@ public class PlayerManager
         do
         {
             position = GetRandomPositionInBounds(groundBounds, margin: 2f);
-            position.y = groundYLevel + playerSettings.yOffset; // Set Y using yOffset
             isValid = CheckPositionIsClear(position);
         } while (!isValid);
 
@@ -42,16 +39,35 @@ public class PlayerManager
         {
             if (collider.CompareTag("Obstacle"))
             {
-                return false; // Avoid overlapping with obstacles
+                return false; // Ensure player does not overlap obstacles
             }
         }
-        return true; // Position is clear
+        return true;
     }
 
     private Vector3 GetRandomPositionInBounds(Bounds bounds, float margin)
     {
         float x = Random.Range(bounds.min.x + margin, bounds.max.x - margin);
         float z = Random.Range(bounds.min.z + margin, bounds.max.z - margin);
-        return new Vector3(x, groundYLevel + playerSettings.yOffset, z); // Apply yOffset
+        return new Vector3(x, 0, z); // Y will be determined dynamically
+    }
+
+    private float GetAdjustedHeight(Vector3 position)
+    {
+        // Get ground height at the position
+        float groundHeight = groundManager.GetGroundHeightAt(position);
+
+        // Get player's collider height
+        GameObject tempPlayer = Object.Instantiate(playerSettings.prefab, position, Quaternion.identity);
+        Collider playerCollider = tempPlayer.GetComponent<Collider>();
+        float colliderHeight = 0f;
+
+        if (playerCollider != null)
+        {
+            colliderHeight = playerCollider.bounds.extents.y; // Half the height of the collider
+        }
+
+        Object.Destroy(tempPlayer); // Cleanup temporary instance
+        return groundHeight + colliderHeight;
     }
 }

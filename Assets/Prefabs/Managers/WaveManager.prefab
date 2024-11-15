@@ -57,3 +57,8 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 9725e517b0b2e8543b755f0c371d5ef7, type: 2}
   playerTransform: {fileID: 1008863810752075458, guid: fc89e86281462f24da33956d729d8e65, type: 3}
   waveDelay: 30
+  spawnAreaWidth: 10
+  spawnAreaLength: 10
+  groundLayer:
+    serializedVersion: 2
+    m_Bits: 4096
